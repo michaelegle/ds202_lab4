@@ -17,3 +17,72 @@ offense <- read_excel('cyclonesFootball2019.xlsx', sheet='Offensive')
 bio <- read_excel('cyclonesFootball2019.xlsx', sheet='Biography')
 ```
 
+
+Data cleaning for offense
+```{r}
+offense <- offense %>%
+  mutate_at(.vars = vars(Name, Opponent_Opponent),
+            .funs = funs(as.factor))
+offense <- offense %>%
+  separate('Passing_CMP-ATT', into = c('Passing_CMP', 'Passing_ATT'), sep = '-\r\n')
+
+offense <- offense %>%
+  mutate_at(.vars = vars(Rushing_ATT, Rushing_YDS, Rushing_TD, Receiving_REC,
+                         Receiving_YDS, Receiving_TD, Passing_CMP, Passing_ATT,
+                         Passing_YDS, Passing_TD, Passing_INT),
+            .funs = funs(as.numeric))
+```
+
+```{r}
+str(offense)
+```
+
+Data cleaning for defense
+```{r}
+defense <- defense %>%
+  mutate_at(.vars = vars(Name, Opponent_Opponent),
+            .funs = funs(as.factor))
+
+defense <- defense %>%
+  mutate_at(.vars = vars(Tackles_Solo, Tackles_ASST, Tackles_TFL,
+                         Tackles_Sack, Turnover_FF, Turnover_FR,
+                         Turnover_INT, Pass_QBH, Pass_PB),
+            .funs = funs(as.numeric))
+```
+
+```{r}
+str(defense)
+```
+
+Data cleaning for biographies
+
+```{r}
+bio <- bio %>%
+  mutate_at(.vars = vars(Name, Position, Class, Hometown, Highschool),
+            .funs = funs(as.factor))
+
+bio <- bio %>%
+  separate('Height', into = c('Height_Ft', 'Height_In'), sep = "-")
+
+bio <- bio %>%
+  mutate_at(.vars = vars(Weight, Height_Ft, Height_In),
+            .funs = funs(as.numeric))
+
+bio <- bio %>%
+  mutate(Height = 12 * Height_Ft + Height_In)
+```
+
+```{r}
+str(bio)
+```
+
+Now that all the variables are of the desired type we can reassign the dataframes
+```{r}
+offclean <- offense
+defclean <- defense
+bioclean <- bio
+```
+
+
+
+
