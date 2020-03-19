@@ -1,0 +1,19 @@
+---
+title: "DS 202 Lab 4"
+author: "Michael Egle | github: michaelegle"
+date: "3/19/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(tidyverse)
+defense <- read_excel('cyclonesFootball2019.xlsx', sheet='Defensive')
+offense <- read_excel('cyclonesFootball2019.xlsx', sheet='Offensive')
+bio <- read_excel('cyclonesFootball2019.xlsx', sheet='Biography')
+```
+
