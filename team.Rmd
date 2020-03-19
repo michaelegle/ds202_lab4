@@ -58,7 +58,7 @@ Data cleaning for biographies
 
 ```{r}
 bio <- bio %>%
-  mutate_at(.vars = vars(Name, Position, Class, Hometown, Highschool),
+  mutate_at(.vars = vars(Name, Position),
             .funs = funs(as.factor))
 
 bio <- bio %>%
@@ -83,6 +83,53 @@ defclean <- defense
 bioclean <- bio
 ```
 
+1. Reformat the defClean data frame into a tidy format using pivot_longer. The type of statistic (Tackles_Solo, Tackles_ASST, etc) is added as a new key column named Statistic.
 
+```{r}
+defclean <- defclean %>%
+  pivot_longer(Tackles_Solo:Pass_PB,
+               names_to = "Statistic",
+               values_to = "Count")
+```
 
+2. Create a histogram for each defensive statistic. Use facet_wrap to draw all histograms in a single plot. What defensive skills are rare?
 
+```{r}
+defclean %>%
+  ggplot(aes(x = Count)) +
+  geom_histogram(binwidth = 1) +
+  facet_wrap(. ~ Statistic)
+```
+
+The most rare defensive statistics to accumulate are turnovers (forced fumble, fumble recoveries, and interceptions) which isn't a big shock. Turnovers in football have an element of luck to them as they can sometimes rely on error on the offense's part. As a result, turnovers can be a "right place, right time" thing.
+
+3. Did ISU have better defense against West Virginia or Kansas State? Answer this question by creating a scatterplot with x-axis being the number of solo tackles (by each player) against West Virginia, and y-axis being that against Kansas State. A large number of solo tackles indicates good defense.
+
+```{r}
+defclean %>%
+  pivot_wider(names_from = Opponent_Opponent, values_from = Count) %>%
+  filter(Statistic == "Tackles_Solo") %>%
+  ggplot(aes(x = `West Virginia`, y = `Kansas State`)) +
+  geom_point()
+```
+
+A lot more players had zero solo tackles against Kansas State than they did against West Virginia. Nine players recorded at least one solo tackle against Kansas State, whereas ten recorded at least one against West Virginia. I would say overall the defense performed better against West Virginia.
+
+4. Separate the Hometown column into two columns, namely the city and the state. Print the first few rows of these two columns. (Hint: look at the sep= argument of separate)
+
+```{r}
+bioclean <- bioclean %>%
+  separate(Hometown, into = c("Home_town", "Home_state"), sep = ", ")
+```
+
+5. How many players are there from each state?
+
+```{r}
+bioclean %>%
+  group_by(Home_state) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count)) %>%
+  head()
+```
+
+Most players on Iowa State's football roster are from Iowa, Florida, Ohio, Missouri, Texas, or Wisconsin.
