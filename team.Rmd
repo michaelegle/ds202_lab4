@@ -254,7 +254,26 @@ Summary %>%
 ```
 ``` 
 
+Brock Purdy out performs the rest of the team for passing, however is less likely to out-perform for rushing. As the team is more closely aligned with Brock Purdy's performance, though Purdy still tends to out-perform the team for many games. On the topic of recieving, there is no available data on brock purdy to make any conclusions on this topic.
+
 9. Explore more. You may in addition explore the 2018 data here. Raise a question that can be answered only by looking at two or more data frames. Then answer that question.
 
 Which states do the best recievers come from?
 
+```{r}
+
+recvSummary <- offenseBio %>%
+  group_by(Homestate) %>%
+    summarize(
+      Receiving_YDS = mean(Receiving_YDS,  na.rm = TRUE),
+    ) %>%
+      na.omit() %>%
+        arrange(Receiving_YDS)
+        
+recvSummary$Homestate <- factor(recvSummary$Homestate, levels = arrange(recvSummary, desc(Receiving_YDS))$Homestate)
+        
+recvSummary %>%
+  ggplot(aes(x = Homestate, y = Receiving_YDS)) + geom_col()
+```
+
+It appears the best recievers originate from Oklahoma, Florda, and Kansas as this model depicts their performances out pacing the rest of the states. (non-recieving states have been omitted)
