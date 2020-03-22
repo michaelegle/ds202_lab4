@@ -139,7 +139,7 @@ Most players on Iowa State's football roster are from Iowa, Florida, Ohio, Misso
 6. Find where do the offensive players come from by joining the offensive data and player biography data appropriately.
 
 ```{r}
-offenseBio <- full_join(offense, bio, by = 'Name')
+offenseBio <- full_join(offclean, bio, by = 'Name')
 offenseBio <- offenseBio[!is.na(offenseBio$Hometown), ]
 offenseBio$Homestate <- str_match(offenseBio$Hometown, '[A-z ]+, (\\w+.?)')[,2]
 
@@ -173,4 +173,88 @@ offenseBioRecCull %>%
 There does not appear to be any relationship between these variables, aside from major outliers for those who weigh 183 lbs.
 
 8. How does the performance of quarterback Brock Purdy relate to the performance of the ISU team?
+
+```{R}
+offPurdy <- offclean
+
+purdyCull <- offclean$Name == "Purdy, Brock"
+offenseNoPurdyCull <- offense[!purdyCull, ]
+offensePurdyCull <- offense[purdyCull, ]
+purdySummary <- offensePurdyCull %>%
+  group_by(Opponent_Opponent) %>%
+    summarize(
+      Rushing_ATT = mean(Rushing_ATT, na.rm = TRUE),
+      Rushing_YDS = mean(Rushing_YDS, na.rm = TRUE),
+      Rushing_TD  = mean(Rushing_TD,  na.rm = TRUE),
+      Receiving_REC = mean(Receiving_REC,  na.rm = TRUE),
+      Receiving_YDS = mean(Receiving_YDS,  na.rm = TRUE),
+      Receiving_TD = mean(Receiving_TD,  na.rm = TRUE),
+      Passing_CMP = mean(Passing_CMP,  na.rm = TRUE),
+      Passing_ATT = mean(Passing_ATT,  na.rm = TRUE),
+      Passing_YDS = mean(Passing_YDS,  na.rm = TRUE),
+      Passing_TD = mean(Passing_TD,  na.rm = TRUE),
+      Passing_INT  = mean(Passing_INT,  na.rm = TRUE),
+    )
+
+noPurdySummary <- offenseNoPurdyCull %>%
+  group_by(Opponent_Opponent) %>%
+    summarize(
+      Rushing_ATT = mean(Rushing_ATT, na.rm = TRUE),
+      Rushing_YDS = mean(Rushing_YDS, na.rm = TRUE),
+      Rushing_TD  = mean(Rushing_TD,  na.rm = TRUE),
+      Receiving_REC = mean(Receiving_REC,  na.rm = TRUE),
+      Receiving_YDS = mean(Receiving_YDS,  na.rm = TRUE),
+      Receiving_TD = mean(Receiving_TD,  na.rm = TRUE),
+      Passing_CMP = mean(Passing_CMP,  na.rm = TRUE),
+      Passing_ATT = mean(Passing_ATT,  na.rm = TRUE),
+      Passing_YDS = mean(Passing_YDS,  na.rm = TRUE),
+      Passing_TD = mean(Passing_TD,  na.rm = TRUE),
+      Passing_INT  = mean(Passing_INT,  na.rm = TRUE),
+    )
+
+purdySummary$Who = 'Purdy'
+noPurdySummary$Who = 'ISU Team'
+Summary <- full_join(purdySummary, noPurdySummary)
+
+      
+       
+Summary %>%
+  ggplot(aes(y = Rushing_ATT, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Rushing_YDS, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Rushing_TD, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Receiving_REC, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Receiving_YDS, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Receiving_TD, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Passing_CMP, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+       
+Summary %>%
+  ggplot(aes(y = Passing_ATT, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Passing_YDS, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Passing_TD, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+Summary %>%
+  ggplot(aes(y = Passing_INT, x = Opponent_Opponent, group = Who, col = Who)) + geom_line()
+
+```
+``` 
+
 9. Explore more. You may in addition explore the 2018 data here. Raise a question that can be answered only by looking at two or more data frames. Then answer that question.
+
+Which states do the best recievers come from?
+
