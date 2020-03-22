@@ -1,6 +1,6 @@
 ---
 title: "DS 202 Lab 4"
-author: "Michael Egle | github: michaelegle"
+author: "Michael Egle <michaelegle@iastate.edu>; John Chandara <mrpotatofactory@gmail.com>"
 date: "3/19/2020"
 output: html_document
 ---
